@@ -7,9 +7,6 @@
     Tested on 32bit Ubuntu 10.04
 """
 
-import heapq
-import operator
-
 class Node:
     def __init__(self):
         self.children = {}
@@ -56,6 +53,49 @@ def load_dict(words="/usr/share/dict/words"):
 def find_exact(word):
     return dict_tree.find_word(word)
 
+def vowel_combin(word,i,x,distance):
+    possibles = {}
+    for vowel in vowels:
+        if not vowel is x:
+            new_word = word[:i] + vowel + word[i+1:]
+            possibles[new_word] = distance
+            items = find_vowel_combinations(new_word,i+1,distance+1)
+            possibles.update(items)
+    return possibles
+
+def find_combinations(word,start,distance):
+    output = {}
+    last = None #The last letter we saw
+    last_repeat= None #The last consecutive repeat
+    for i,x in enumerate(word):
+        if i < start:
+            last = x
+            continue
+        if x is last:
+            if not x is last_repeat:
+                last_repeat = x
+                #Remove i from the word: Better way?
+                new_word = word[:i] + word[i+1:]
+                output[new_word]=distance
+                #Don't increment i, since we are trimming the old i away
+                items = find_combinations(new_word, i, distance+1)
+                output.update(items)
+        else:
+            last_repeat = None
+        last = x
+    return output
+
+def find_vowel_combinations(word,start,distance):
+    output = {}
+    for i,x in enumerate(word):
+        if i < start:
+            continue
+        if x in vowels:
+            items = vowel_combin(word,i,x,distance)
+            output.update(items)
+    return output
+
+
 def find_word(word):
     lower = word.lower()
     value = find_exact(lower) 
@@ -83,8 +123,6 @@ def find_word(word):
                 valids[item] = total_words[item]
 
     if len(valids) > 0:
-        print valids 
-        print sorted(valids.iteritems(), key=operator.itemgetter(1))
         print sorted(valids, key=valids.get)
         
 
@@ -94,70 +132,17 @@ def find_word(word):
     else:
         return output_str+value
 
-def find_vowel_combinations(word,start,distance):
-    output = {}
-    for i,x in enumerate(word):
-        if i < start:
-            continue
-        if x in vowels:
-            items = vowel_combin(word,i,x,distance)
-            output.update(items)
-            #for item in items:
-                #moreitems = find_vowel_combinations(item,i+1,distance)
-                #print item
-                #for this in moreitems:
-                #    output.append(this)
-            #    output[item]=items[item] #Use update?
-    return output
-
-def vowel_combin(word,i,x,distance):
-    possibles = {}
-    for vowel in vowels:
-        if not vowel is x:
-            new_word = word[:i] + vowel + word[i+1:]
-            possibles[new_word] = distance
-            #possibles.append(new_word)
-            items = find_vowel_combinations(new_word,i+1,distance+1)
-            possibles.update(items)
-            #for item in items:
-            #    possibles[item] = items[item]
-                #possibles.append(item)
-    return possibles
-            
-
-def find_combinations(word,start,distance):
-    output = {}
-    last = None #The last letter we saw
-    last_repeat= None #The last consecutive repeat
-    for i,x in enumerate(word):
-        if i < start:
-            last = x
-            continue
-        if x is last: 
-            if not x is last_repeat:
-                last_repeat = x
-                #Remove i from the word: Better way?
-                new_word = word[:i] + word[i+1:]
-                output[new_word]=distance
-                #Don't increment i, since we are trimming the old i away
-                items = find_combinations(new_word, i, distance+1)
-                output.update(items)
-        else:
-            last_repeat = None
-        last = x
-    return output
-
 
 
 print "Loading dictionary at /usr/share/dict/words ..."
 load_dict()
 print "Loaded."
-#print find_word("mateg")
+print find_word("mateg")
 print find_word("mate")
 print find_word("MATE")
 print find_word("mATe")
 print find_word("matte")
-#print find_word("mattte")
+print find_word("mattte")
 print find_word("mmmattte")
-#print find_word("CUNsperrICY")
+print find_word("CUNsperrICY")
 
