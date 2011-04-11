@@ -142,6 +142,8 @@ def find_word(word):
 #TODO Break into methods find_word
 #TODO Create the prompt
 #TODO Need to write a test harness to generate words to look up
+#
+#TODO Re-use position in tree for descents. Instead of starting at top with each call to find_exact
 
 print "Loading dictionary at /usr/share/dict/words ..."
 load_dict()
