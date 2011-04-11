@@ -55,23 +55,21 @@ def find_exact(word):
 
 def find_word(word):
     lower = word.lower()
-    # Try lower case word first
     value = find_exact(lower) 
     
     valids = {}
-    # Prune Repeats and vowel combinations
+    # If lower failed: Prune Repeats and vowel combinations
     if value is None or value is "":
         # Repeats
         possibles = find_combinations(lower,0,1)
-        print possibles
+        #print possibles
         for item in possibles:
             if item == find_exact(item):
                 valids[item] = possibles[item]
 
         # Find Vowel Combinations
-                
-
-
+        possibles = find_vowel_combinations(lower,0,1)
+        print possibles
 
     if len(valids) > 0:
         print valids 
@@ -82,11 +80,41 @@ def find_word(word):
     else:
         return output_str+value
 
-
-def find_combinations(word, start,distance):
+def find_vowel_combinations(word,start,distance):
     output = {}
-    last = None
-    last_repeat= None
+    for i,x in enumerate(word):
+        if i < start:
+            continue
+        if x in vowels:
+            items = vowel_combin(word,i,x,distance)
+            output.update(items)
+            #for item in items:
+                #moreitems = find_vowel_combinations(item,i+1,distance)
+                #print item
+                #for this in moreitems:
+                #    output.append(this)
+            #    output[item]=items[item] #Use update?
+    return output
+
+def vowel_combin(word,i,x,distance):
+    possibles = {}
+    for vowel in vowels:
+        if not vowel is x:
+            new_word = word[:i] + vowel + word[i+1:]
+            possibles[new_word] = distance
+            #possibles.append(new_word)
+            items = find_vowel_combinations(new_word,i+1,distance+1)
+            possibles.update(items)
+            #for item in items:
+            #    possibles[item] = items[item]
+                #possibles.append(item)
+    return possibles
+            
+
+def find_combinations(word,start,distance):
+    output = {}
+    last = None #The last letter we saw
+    last_repeat= None #The last consecutive repeat
     for i,x in enumerate(word):
         if i < start:
             last = x
@@ -94,13 +122,12 @@ def find_combinations(word, start,distance):
         if x is last: 
             if not x is last_repeat:
                 last_repeat = x
+                #Remove i from the word: Better way?
                 new_word = word[:i] + word[i+1:]
                 output[new_word]=distance
-                #output.append(new_word)
+                #Don't increment i, since we are trimming the old i away
                 items = find_combinations(new_word, i, distance+1)
                 output.update(items)
-                #for item in items:
-                #    output.append(item)
         else:
             last_repeat = None
         last = x
