@@ -7,6 +7,9 @@
     Tested on 32bit Ubuntu 10.04
 """
 
+import heapq
+import operator
+
 class Node:
     def __init__(self):
         self.children = {}
@@ -63,16 +66,27 @@ def find_word(word):
         # Repeats
         possibles = find_combinations(lower,0,1)
         #print possibles
+        #Add to valid everything after just repeated pruning
         for item in possibles:
             if item == find_exact(item):
                 valids[item] = possibles[item]
 
         # Find Vowel Combinations
-        possibles = find_vowel_combinations(lower,0,1)
-        print possibles
+        total_words = {}
+        for item,distance in possibles.iteritems():
+            more_words = find_vowel_combinations(item,0,distance)
+            total_words.update(more_words)
+        print total_words
+        #Add to valid everything that is vowel mutated 
+        for item,distance in total_words.iteritems():
+            if item == find_exact(item):
+                valids[item] = total_words[item]
 
     if len(valids) > 0:
         print valids 
+        print sorted(valids.iteritems(), key=operator.itemgetter(1))
+        print sorted(valids, key=valids.get)
+        
 
     output_str = "  Looking for a match for "+ word+ ": "
     if value is None or value is "":
