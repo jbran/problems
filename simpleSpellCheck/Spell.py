@@ -105,26 +105,27 @@ def find_word(word):
     if value is None or value is "":
         # Repeats
         possibles = find_combinations(lower,0,1)
-        #print possibles
+        possibles[lower] = 1#Add our lower for vowel mutation
         #Add to valid everything after just repeated pruning
         for item in possibles:
             if item == find_exact(item):
                 valids[item] = possibles[item]
 
+        #Assuming if just removing repeated chars finds a good word
+        #then we have found likely the best results. This assumption
+        #will invariably backfire on certain inputs
         if len(valids) == 0:
             # Find Vowel Combinations
             total_words = {}
             for item,distance in possibles.iteritems():
                 more_words = find_vowel_combinations(item,0,distance)
                 total_words.update(more_words)
-            #print total_words
             #Add to valid everything that is vowel mutated 
             for item,distance in total_words.iteritems():
                 if item == find_exact(item):
                     valids[item] = total_words[item]
 
     if len(valids) > 0:
-        print valids
         values = sorted(valids, key=valids.get)
         value = values[0]
         
