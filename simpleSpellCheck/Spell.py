@@ -116,14 +116,16 @@ def find_word(word):
         for item,distance in possibles.iteritems():
             more_words = find_vowel_combinations(item,0,distance)
             total_words.update(more_words)
-        print total_words
+        #print total_words
         #Add to valid everything that is vowel mutated 
         for item,distance in total_words.iteritems():
             if item == find_exact(item):
                 valids[item] = total_words[item]
 
     if len(valids) > 0:
-        print sorted(valids, key=valids.get)
+        print valids
+        values = sorted(valids, key=valids.get)
+        value = values[0]
         
 
     output_str = "  Looking for a match for "+ word+ ": "
@@ -145,4 +147,11 @@ print find_word("matte")
 print find_word("mattte")
 print find_word("mmmattte")
 print find_word("CUNsperrICY")
+print find_word("weke")
+print find_word("jjoobbb")
+print find_word("inSIDE")
+print find_word("peepple")
+print find_word("sheeeeeep")
+print find_word("sheeple")
+
 
