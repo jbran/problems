@@ -28,7 +28,7 @@ class Node:
 
         self.children[key].add_word_int(full_word, rest)
 
-    def find_word(self, word):
+    def find_match(self, word):
         if word == "":
             return self.word
 
@@ -36,7 +36,7 @@ class Node:
         rest = word[1:]
 
         try:
-            return self.children[key].find_word(rest)
+            return self.children[key].find_match(rest)
         except:
             return ""
 
@@ -51,7 +51,7 @@ def load_dict(words="/usr/share/dict/words"):
             dict_tree.add_word(line.strip())
 
 def find_exact(word):
-    return dict_tree.find_word(word)
+    return dict_tree.find_match(word)
 
 def vowel_combin(word,i,x,distance):
     possibles = {}
@@ -126,9 +126,11 @@ def find_word(word):
                     valids[item] = total_words[item]
 
     if len(valids) > 0:
+        #We choose the "best" word to return by picking a word
+        #with the smallest edit distance. Words with similar distance
+        #are sorted via black magic (Assumed to be alphabetically)
         values = sorted(valids, key=valids.get)
         value = values[0]
-        
 
     output_str = "  Looking for a match for "+ word+ ": "
     if value is None or value is "":
@@ -136,14 +138,17 @@ def find_word(word):
     else:
         return output_str+value
 
-
+#TODO Fix edit distance defect with "peepple", says 1 should be 2
+#TODO Break into methods find_word
+#TODO Create the prompt
+#TODO Need to write a test harness to generate words to look up
 
 print "Loading dictionary at /usr/share/dict/words ..."
 load_dict()
 print "Loaded."
 print find_word("mateg")
 print find_word("mate")
-print find_word("MATE")
+print find_word("ren")
 print find_word("mATe")
 print find_word("matte")
 print find_word("mattte")
