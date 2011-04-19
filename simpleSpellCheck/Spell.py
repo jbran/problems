@@ -56,7 +56,7 @@ def find_exact(word):
 def vowel_combin(word,i,x,distance):
     possibles = {}
     for vowel in vowels:
-        if not vowel is x:
+        if vowel != x:
             new_word = word[:i] + vowel + word[i+1:]
             possibles[new_word] = distance
             items = find_vowel_combinations(new_word,i+1,distance+1)
@@ -71,8 +71,8 @@ def find_combinations(word,start,distance):
         if i < start:
             last = x
             continue
-        if x is last:
-            if not x is last_repeat:
+        if x == last:
+            if x != last_repeat:
                 last_repeat = x
                 #Remove i from the word: Better way?
                 new_word = word[:i] + word[i+1:]
@@ -102,7 +102,7 @@ def find_word(word):
     
     valids = {}
     # If lower failed: Prune Repeats and vowel combinations
-    if value is None or value is "":
+    if value is None or value == "":
         # Repeats
         possibles = find_combinations(lower,0,1)
         possibles[lower] = 1#Add our lower for vowel mutation
@@ -133,7 +133,7 @@ def find_word(word):
         value = values[0]
 
     output_str = "  Looking for a match for "+ word+ ": "
-    if value is None or value is "":
+    if value is None or value == "":
         return output_str+'NO SUGGESTIONS'
     else:
         return output_str+value
