@@ -122,4 +122,4 @@ for w in words:
 
 while(True):
     word = raw_input("> ")
-    print dict_tree.find_fuzzy(word)
+    print word, dict_tree.find_fuzzy(word)
