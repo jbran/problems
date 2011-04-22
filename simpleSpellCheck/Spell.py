@@ -112,6 +112,7 @@ words = ["mateg",
          "jjoobbb",
          "inSIDE",
          "peepple",
+         "weeeeke",
          "sheeeeeep",
          "meeeeeeen",
          "sheeple"]
