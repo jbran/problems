@@ -12,10 +12,11 @@
     And a combination of them:
         "CUNsperrICY" => "conspiracy"
         "weeeeeeeeke" => "wake" (Wrong vowel, then repeated)
-        "waeiouuioka" => "wake" (Repeated vowel, then vowel wrongified)
+        "waeiouuioka" => "woke" (Repeated vowel, then vowel wrongified)
 
     Tested on 32bit Ubuntu 10.04 & 11.04
     Python 2.6.5 & 2.7.1
+
 """
 
 vowels = set(['a','e','i','o','u'])
