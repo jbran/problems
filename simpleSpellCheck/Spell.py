@@ -79,7 +79,7 @@ class Node:
                         fuzzy_matches.extend(m)
 
         # try with repeated letters removed
-        if self.letter == key or old_key == key:
+        if self.letter == key or (key in vowels and rest != "" and rest[0] in vowels):
             m = self.find_fuzzy_matches(rest, old_key)
             fuzzy_matches.extend(m)
 
