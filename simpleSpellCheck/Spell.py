@@ -51,7 +51,7 @@ class Node:
         else:
             return 'NO SUGGESTIONS'
 
-    def find_fuzzy_matches(self, word):
+    def find_fuzzy_matches(self, word, old_key=""):
         if word == "":
             if self.word:
                 return [(0,self.word)]
@@ -60,7 +60,7 @@ class Node:
 
         key = word[0]
         rest = word[1:]
-
+        
         matches = []
         if key in self.children:
             matches = self.children[key].find_fuzzy_matches(rest)
@@ -68,14 +68,19 @@ class Node:
         fuzzy_matches = []
         #Try descending via mutated vowels
         if key in vowels:
+            prev_key = key
             for v in vowels:
                 if v != key:
                     if v in self.children:
-                        m = self.children[v].find_fuzzy_matches(rest)
+                        #if rest != "" and rest[0] in vowels:
+                        m = self.children[v].find_fuzzy_matches(rest,prev_key)
+                        #else:
+                        #    m = self.children[v].find_fuzzy_matches(rest,prev_key)
                         fuzzy_matches.extend(m)
+
         # try with repeated letters removed
-        if self.letter == key:
-            m = self.find_fuzzy_matches(rest)
+        if self.letter == key or old_key == key:
+            m = self.find_fuzzy_matches(rest, old_key)
             fuzzy_matches.extend(m)
 
         # remove nones with fancy-ness
@@ -103,6 +108,8 @@ print "Loaded. Cntrl-C or Cntrl-D will kill program."
 words = ["mateg",
          "mate",
          "ren",
+         "zee",
+         "zoot",
          "mATe",
          "matte",
          "mattte",
@@ -113,13 +120,20 @@ words = ["mateg",
          "inSIDE",
          "peepple",
          "weeeeke",
+         "laaaan",
          "sheeeeeep",
          "meeeeeeen",
+         "weaoike",
          "sheeple"]
 
 for w in words:
      print w,dict_tree.find_fuzzy(w)
 
-while(True):
-    word = raw_input("> ")
-    print word, dict_tree.find_fuzzy(word)
+#w = "weeeeke"
+w = "zoot"
+print dict_tree.find_fuzzy(w)
+
+
+#while(True):
+#    word = raw_input("> ")
+#    print word, dict_tree.find_fuzzy(word)
