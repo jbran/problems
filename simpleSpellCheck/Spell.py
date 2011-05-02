@@ -4,7 +4,18 @@
     One can modify the code to pass in a new location to a dict at the bottom
     where load_dict() becomes load_dict('/path/to/awesometown')
 
-    Tested on 32bit Ubuntu 10.04
+    Handles three mispellings:
+        1) Case (upper/lower) errors: "inSIDE" => "inside"
+        2) Repeated letters: "jjoobbb" => "job"
+        3) Incorrect vowels: "weke" => "wake"
+
+    And a combination of them:
+        "CUNsperrICY" => "conspiracy"
+        "weeeeeeeeke" => "wake" (Wrong vowel, then repeated)
+        "waeiouuioka" => "wake" (Repeated vowel, then vowel wrongified)
+
+    Tested on 32bit Ubuntu 10.04 & 11.04
+    Python 2.6.5 & 2.7.1
 """
 
 vowels = set(['a','e','i','o','u'])
@@ -32,18 +43,6 @@ class Node:
 
         self.children[key].add_word_recur(full_word, rest)
 
-    def find_match(self, word):
-        if word == "":
-            return self.word
-
-        key = word[0]
-        rest = word[1:]
-
-        try:
-            return self.children[key].find_match(rest)
-        except:
-            return ""
-
     def find_fuzzy(self, word):
         matches = self.find_fuzzy_matches(word.lower())
         if matches:
@@ -51,7 +50,7 @@ class Node:
         else:
             return 'NO SUGGESTIONS'
 
-    def find_fuzzy_matches(self, word, old_key=""):
+    def find_fuzzy_matches(self, word):
         if word == "":
             if self.word:
                 return [(0,self.word)]
@@ -64,32 +63,36 @@ class Node:
         matches = []
         if key in self.children:
             matches = self.children[key].find_fuzzy_matches(rest)
+        matches = [m for m in matches if m] #remove None's
+        #Short-Circuit opportunity: We have a match!
+        if len(matches) > 0:
+            return matches
 
         fuzzy_matches = []
         #Try descending via mutated vowels
+        #Handle: wuka -> wake
         if key in vowels:
-            prev_key = key
             for v in vowels:
                 if v != key:
                     if v in self.children:
-                        #if rest != "" and rest[0] in vowels:
-                        m = self.children[v].find_fuzzy_matches(rest,prev_key)
-                        #else:
-                        #    m = self.children[v].find_fuzzy_matches(rest,prev_key)
+                        m = self.children[v].find_fuzzy_matches(rest)
                         fuzzy_matches.extend(m)
 
-        # try with repeated letters removed
-        if self.letter == key or (key in vowels and rest != "" and rest[0] in vowels):
-            m = self.find_fuzzy_matches(rest, old_key)
+        # try with repeated letters or repeated vowels removed
+        # Handle: wakkkke -> wake
+        #         weeeeeeke -> wake
+        #         waeaoiooika -> wake
+        vowel_repeat = (key in vowels and rest != "" and rest[0] in vowels)
+        if self.letter == key or vowel_repeat:
+            m = self.find_fuzzy_matches(rest)
             fuzzy_matches.extend(m)
 
-        # remove nones with fancy-ness
-        matches = [m for m in matches if m]
+        # remove None's
         fuzzy_matches = [m for m in fuzzy_matches if m]
 
         # calculate edit distance of our fuzzy matches
         adjustd_fuzzy_matches = [(distance+1,w) for distance,w in fuzzy_matches]
-        return matches + adjustd_fuzzy_matches
+        return adjustd_fuzzy_matches
         
 
 dict_tree = Node()
@@ -119,21 +122,15 @@ words = ["mateg",
          "jjoobbb",
          "inSIDE",
          "peepple",
-         "weeeeke",
+         "weeeeka",
          "laaaan",
          "sheeeeeep",
          "meeeeeeen",
          "weaoike",
          "sheeple"]
-
 for w in words:
      print w,dict_tree.find_fuzzy(w)
 
-#w = "weeeeke"
-w = "zoot"
-print dict_tree.find_fuzzy(w)
-
-
-#while(True):
-#    word = raw_input("> ")
-#    print word, dict_tree.find_fuzzy(word)
+while(True):
+    word = raw_input("> ")
+    print dict_tree.find_fuzzy(word)
