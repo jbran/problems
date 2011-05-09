@@ -114,34 +114,9 @@ def load_dict(words="/usr/share/dict/words"):
         for line in f:
             dict_tree.add_word(line.strip())
 
-#TODO Need to write a test harness to generate words to look up, can use removed code from before
-#
-
 print "Loading dictionary at /usr/share/dict/words ..."
 load_dict()
 print "Loaded. Cntrl-C or Cntrl-D will kill program."
-words = ["mateg",
-         "mate",
-         "ren",
-         "zee",
-         "zoot",
-         "mATe",
-         "matte",
-         "mattte",
-         "mmmattte",
-         "CUNsperrICY",
-         "weke",
-         "jjoobbb",
-         "inSIDE",
-         "peepple",
-         "weeeeka",
-         "laaaan",
-         "sheeeeeep",
-         "meeeeeeen",
-         "weaoike",
-         "sheeple"]
-#for w in words:
-#     print w,dict_tree.find_fuzzy(w)
 
 while(True):
     word = raw_input("> ")
