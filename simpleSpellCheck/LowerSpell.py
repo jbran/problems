@@ -13,15 +13,13 @@
         "CUNsperrICY" => "conspiracy"
         "weeeeeeeeke" => "wake" (Wrong vowel, then repeated)
         "waeiouuioka" => "woke" (Repeated vowel, then vowel wrongified)
-        "aaacapulco"  => "Acapulco"
-        "AaAcapulco"  => "Acapulco"
 
     Tested on 32bit Ubuntu 10.04 & 11.04
-    Python 2.6.5 & 2.7.1 & wamerican dict
+    Python 2.6.5 & 2.7.1
 
 """
 
-vowels = set(['a','e','i','o','u', 'A', 'E', 'I', 'O', 'U'])
+vowels = set(['a','e','i','o','u'])
 
 class Node:
     def __init__(self, value=None):
@@ -47,7 +45,15 @@ class Node:
         self.children[key].add_word_recur(full_word, rest)
 
     def find_fuzzy(self, word):
-        matches = self.find_fuzzy_matches(word)
+        matches = self.find_fuzzy_matches(word.lower())
+#        if not matches:
+#            matches = self.find_fuzzy_matches(word.upper())
+#        if not matches and len(word) > 1:
+#            new_word = word[0].upper() + word[1:].lower()
+#            matches = self.find_fuzzy_matches(new_word)
+#        if not matches
+
+
 
         if matches:
             return reduce(lambda x,y: x if x[0] <= y[0] else y, matches)[1]
@@ -63,20 +69,11 @@ class Node:
 
         key = word[0]
         rest = word[1:]
-
-        #Deal with case problems
-        #Handle:  
-        lower_matches = []
-        if key.lower() in self.children:
-            lower_matches = self.children[key.lower()].find_fuzzy_matches(rest)
-        lower_matches = [m for m in lower_matches if m] #remove None's
-        #if len(lower_matches) > 0:
-        #    return lower_matches
-        upper_matches = []
-        if key.upper() in self.children:
-            upper_matches = self.children[key.upper()].find_fuzzy_matches(rest)
-        upper_matches = [m for m in upper_matches if m]            
-        matches = lower_matches + upper_matches
+        
+        matches = []
+        if key in self.children:
+            matches = self.children[key].find_fuzzy_matches(rest)
+        matches = [m for m in matches if m] #remove None's
         #Short-Circuit opportunity: We have a match!
         if len(matches) > 0:
             return matches
@@ -96,8 +93,7 @@ class Node:
         #         weeeeeeke -> wake
         #         waeaoiooika -> wake
         vowel_repeat = (key in vowels and rest != "" and rest[0] in vowels)
-        letter_repeat = (key and self.letter and self.letter.lower() == key.lower())
-        if letter_repeat or vowel_repeat:
+        if self.letter == key or vowel_repeat:
             m = self.find_fuzzy_matches(rest)
             fuzzy_matches.extend(m)
 
@@ -114,7 +110,7 @@ dict_tree = Node()
 def load_dict(words="/usr/share/dict/words"):
     with open(words, 'r') as f:
         for line in f:
-            dict_tree.add_word(line.strip())
+            dict_tree.add_word(line.strip().lower())
 
 #TODO Need to write a test harness to generate words to look up, can use removed code from before
 #
@@ -147,4 +143,4 @@ words = ["mateg",
 
 while(True):
     word = raw_input("> ")
-    print dict_tree.find_fuzzy(word.strip())
+    print word,dict_tree.find_fuzzy(word)

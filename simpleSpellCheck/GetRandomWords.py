@@ -1,5 +1,5 @@
 '''
-    Will generate combinations of mutated vowels and then repeated characters to generate a mispelled word given a source word. 
+    Will generate combinations of mutated vowels and then repeated characters to generate a mispelled word given a source word. Does not try to handle randomly capitlizing words since those all covered by a call to lower
 
 '''
 
@@ -21,8 +21,8 @@ def generate(word):
 
     """
     v_combins = [word]#Add original
-    items = find_vowel_combinations(word,0,0)
-    v_combins.extend(items)
+    #items = find_vowel_combinations(word,0,0)
+    #v_combins.extend(items)
     combinations = generate_repeats(v_combins)
     wrong_vowels = generate_wrong_vowels(word) 
     combinations.extend(wrong_vowels)
@@ -38,26 +38,6 @@ def generate_wrong_vowels(word):
     word = word.replace("a",vowels)
     return [word]
  
-def vowel_combin(word,i,x,distance):
-    possibles = []
-    for vowel in vowels:
-        if vowel != x:
-            new_word = word[:i] + vowel + word[i+1:]
-            possibles.append(new_word  )
-            items = find_vowel_combinations(new_word,i+1,distance+1)
-            possibles.extend(items)
-    return possibles   
-
-def find_vowel_combinations(word,start,distance):
-    output = []
-    for i,x in enumerate(word):
-        if i < start:
-            continue
-        if x in vowels:
-            items = vowel_combin(word,i,x,distance)
-            output.extend(items)
-    return output
-
 def generate_repeats(list_of_words):
     combins = []
     combins.extend(list_of_words)
@@ -79,17 +59,29 @@ def add_repeat(word,i):
 
 
 words = []
-
-
     
 def load_words(dictionary="/usr/share/dict/words"):
     with open(dictionary, 'r') as f:
         for line in f:
-            if random.randint(0,100) < 1:    
+            if random.randint(0,100) < 4:    
                 words.append(line.strip())
 
 load_words()            
 for word in words:
     possibles = generate(word)
     for item in possibles:
+        if random.randint(0,100) < 1:
+            #Randomize the case of the word
+            #By have the 10 most popular letters uppercase only
+            item = item.lower()
+            item = item.replace("e","E",2)
+            item = item.replace("t","T",2)
+            item = item.replace("a","A",2)
+            item = item.replace("o","O",2)
+            item = item.replace("i","I",2)
+            item = item.replace("n","n",2)
+            item = item.replace("s","S",2)
+            item = item.replace("h","H",2)
+            item = item.replace("r","R",2)
+            item = item.replace("d","D",2)
         print item
