@@ -70,16 +70,15 @@ class Node:
         if key.lower() in self.children:
             lower_matches = self.children[key.lower()].find_fuzzy_matches(rest)
         lower_matches = [m for m in lower_matches if m] #remove None's
-        #if len(lower_matches) > 0:
-        #    return lower_matches
+        if len(lower_matches) > 0:
+            return lower_matches
         upper_matches = []
         if key.upper() in self.children:
             upper_matches = self.children[key.upper()].find_fuzzy_matches(rest)
         upper_matches = [m for m in upper_matches if m]            
-        matches = lower_matches + upper_matches
         #Short-Circuit opportunity: We have a match!
-        if len(matches) > 0:
-            return matches
+        if len(upper_matches) > 0:
+            return upper_matches
 
         fuzzy_matches = []
         #Try descending via mutated vowels
@@ -103,7 +102,6 @@ class Node:
 
         # remove None's
         fuzzy_matches = [m for m in fuzzy_matches if m]
-
         # calculate edit distance of our fuzzy matches
         adjustd_fuzzy_matches = [(distance+1,w) for distance,w in fuzzy_matches]
         return adjustd_fuzzy_matches
