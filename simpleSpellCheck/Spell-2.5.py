@@ -19,9 +19,9 @@
         "aaacapulco"  => "Acapulco"
         "AaAcapulco"  => "Acapulco"
 
-    Developed on 32bit Ubuntu 10.04 & 11.04
+    Tested on 32bit Ubuntu 10.04 & 11.04
     Python 2.6.5 & 2.7.1 & wamerican dict
-    Changed to be compat with 2.5.5 via Cygwin/Win7
+    Compat with 2.5.5 via Cygwin/Win7
 
 """
 
