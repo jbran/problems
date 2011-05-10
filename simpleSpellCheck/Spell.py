@@ -4,6 +4,9 @@
     One can modify the code to pass in a new location to a dict at the bottom
     where load_dict() becomes load_dict('/path/to/awesometown')
 
+    The dictionary is backed by a prefix tree and candidate words are found via
+    mutations in the input string.
+
     Handles three mispellings:
         1) Case (upper/lower) errors: "inSIDE" => "inside"
         2) Repeated letters: "jjoobbb" => "job"
@@ -16,12 +19,13 @@
         "aaacapulco"  => "Acapulco"
         "AaAcapulco"  => "Acapulco"
 
-    Tested on 32bit Ubuntu 10.04 & 11.04
+    Developed on 32bit Ubuntu 10.04 & 11.04
     Python 2.6.5 & 2.7.1 & wamerican dict
 
 """
 
-vowels = set(['a','e','i','o','u', 'A', 'E', 'I', 'O', 'U'])
+
+vowels = set(['a','e','i','o','u'])
 
 class Node:
     def __init__(self, value=None):
@@ -31,7 +35,10 @@ class Node:
 
     #helper for recursion
     def add_word(self, word):
-        self.add_word_recur(word,word)
+        #Store the "proper" word, but build the path to it via the lower
+        #This allows all searching to be done with just lower case
+        #but to return a proper case word
+        self.add_word_recur(word,word.lower())
 
     def add_word_recur(self, full_word, word_left):
         if word_left == "":
@@ -65,20 +72,14 @@ class Node:
         rest = word[1:]
 
         #Deal with case problems
-        #Handle:  
-        lower_matches = []
-        if key.lower() in self.children:
-            lower_matches = self.children[key.lower()].find_fuzzy_matches(rest)
-        lower_matches = [m for m in lower_matches if m] #remove None's
-        if len(lower_matches) > 0:
-            return lower_matches
-        upper_matches = []
-        if key.upper() in self.children:
-            upper_matches = self.children[key.upper()].find_fuzzy_matches(rest)
-        upper_matches = [m for m in upper_matches if m]            
+        #Handle: acapulco -> Acapulco
+        matches = []
+        if key in self.children:
+            matches = self.children[key].find_fuzzy_matches(rest)
+        matches = [m for m in matches if m] #remove None's
         #Short-Circuit opportunity: We have a match!
-        if len(upper_matches) > 0:
-            return upper_matches
+        if len(matches) > 0:
+            return matches
 
         fuzzy_matches = []
         #Try descending via mutated vowels
@@ -95,8 +96,7 @@ class Node:
         #         weeeeeeke -> wake
         #         waeaoiooika -> wake
         vowel_repeat = (key in vowels and rest != "" and rest[0] in vowels)
-        letter_repeat = (key and self.letter and self.letter.lower() == key.lower())
-        if letter_repeat or vowel_repeat:
+        if self.letter == key or vowel_repeat:
             m = self.find_fuzzy_matches(rest)
             fuzzy_matches.extend(m)
 
@@ -120,4 +120,5 @@ print "Loaded. Cntrl-C or Cntrl-D will kill program."
 
 while(True):
     word = raw_input("> ")
-    print dict_tree.find_fuzzy(word.strip())
+    #We only search on lower case input. See the comment in add_word
+    print dict_tree.find_fuzzy(word.strip().lower())
