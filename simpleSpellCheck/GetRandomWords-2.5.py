@@ -67,7 +67,7 @@ def load_words(dictionary="/usr/share/dict/words"):
         if random.randint(0,100) < 4:    
 	    words.append(line.strip())
 
-load_words("C:/Users/fry/fryhome/american-english")            
+load_words()            
 for word in words:
     possibles = generate(word)
     for item in possibles:

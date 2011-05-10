@@ -55,7 +55,7 @@ class Node:
         self.children[key].add_word_recur(full_word, rest)
 
     def find_fuzzy(self, word):
-        matches = self.find_fuzzy_matches(word)
+        matches = self.find_fuzzy_matches(word.strip().lower())
 
         if matches:
             return reduce(lambda x,y: x if x[0] <= y[0] else y, matches)[1]
@@ -112,19 +112,15 @@ dict_tree = Node()
 
 def load_dict(words="/usr/share/dict/words"):
     #with file.open(words, 'r') as f:
-    #f = open(words, 'r')
-    #for line in f:
-    #    dict_tree.add_word(line.strip())
-    with open(words, 'r') as f:
-        for line in f:
-            dict_tree.add_word(line.strip())
+    f = open(words, 'r')
+    for line in f:
+        dict_tree.add_word(line.strip())
 
 print "Loading dictionary at /usr/share/dict/words ..."
-#load_dict("C:/Users/fry/fryhome/american-english")
 load_dict()
 print "Loaded. Cntrl-C or Cntrl-D will kill program."
 
 while(True):
     word = raw_input("> ")
     #We only search on lower case input. See the comment in add_word
-    print dict_tree.find_fuzzy(word.strip().lower())
+    print dict_tree.find_fuzzy(word)

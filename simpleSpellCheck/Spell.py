@@ -54,7 +54,7 @@ class Node:
         self.children[key].add_word_recur(full_word, rest)
 
     def find_fuzzy(self, word):
-        matches = self.find_fuzzy_matches(word)
+        matches = self.find_fuzzy_matches(word.strip().lower())
 
         if matches:
             return reduce(lambda x,y: x if x[0] <= y[0] else y, matches)[1]
@@ -121,4 +121,4 @@ print "Loaded. Cntrl-C or Cntrl-D will kill program."
 while(True):
     word = raw_input("> ")
     #We only search on lower case input. See the comment in add_word
-    print dict_tree.find_fuzzy(word.strip().lower())
+    print dict_tree.find_fuzzy(word)
