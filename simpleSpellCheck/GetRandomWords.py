@@ -1,5 +1,5 @@
 '''
-    Will generate combinations of mutated vowels and then repeated characters to generate a mispelled word given a source word. Does not try to handle randomly capitlizing words since those all covered by a call to lower
+Will generate combinations of mutated vowels and then repeated characters to generate a mispelled word given a source word. Does not do full vowel mutation for the sake of speed: Just replaces every vowel with 'aeiou'
 
 '''
 
