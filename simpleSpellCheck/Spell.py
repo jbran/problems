@@ -48,6 +48,9 @@ class Node:
         key = word_left[0]
         rest = word_left[1:]
 
+        if key in vowels:
+            key = 'a'
+
         if key not in self.children:
             self.children[key] = Node(key)
 
@@ -71,6 +74,9 @@ class Node:
         key = word[0]
         rest = word[1:]
 
+        if key in vowels:
+            key = 'a'
+
         #Deal with case problems
         #Handle: acapulco -> Acapulco
         matches = []
@@ -81,22 +87,12 @@ class Node:
         if len(matches) > 0:
             return matches
 
-        fuzzy_matches = []
-        #Try descending via mutated vowels
-        #Handle: wuka -> wake
-        if key in vowels:
-            for v in vowels:
-                if v != key:
-                    if v in self.children:
-                        m = self.children[v].find_fuzzy_matches(rest)
-                        fuzzy_matches.extend(m)
-
         # try with repeated letters or repeated vowels removed
         # Handle: wakkkke -> wake
         #         weeeeeeke -> wake
         #         waeaoiooika -> wake
-        vowel_repeat = (key in vowels and rest != "" and rest[0] in vowels)
-        if self.letter == key or vowel_repeat:
+        fuzzy_matches = []
+        if self.letter == key:
             m = self.find_fuzzy_matches(rest)
             fuzzy_matches.extend(m)
 
@@ -110,8 +106,8 @@ class Node:
 dict_tree = Node()
 
 def load_dict(words="/usr/share/dict/words"):
-    with open(words, 'r') as f:
-        for line in f:
+    f = open(words, 'r')
+    for line in f:
             dict_tree.add_word(line.strip())
 
 print "Loading dictionary at /usr/share/dict/words ..."
