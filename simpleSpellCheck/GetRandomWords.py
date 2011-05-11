@@ -61,10 +61,10 @@ def add_repeat(word,i):
 words = []
     
 def load_words(dictionary="/usr/share/dict/words"):
-    with open(dictionary, 'r') as f:
-        for line in f:
-            if random.randint(0,100) < 4:    
-                words.append(line.strip())
+    f = open(dictionary, 'r')
+    for line in f:
+        if random.randint(0,100) < 50:    
+            words.append(line.strip())
 
 load_words()            
 for word in words:
