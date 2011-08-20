@@ -7,10 +7,10 @@ class Node:
 
 
 def pwRev(node):
-    output = node.next 
-    if not node or not output:
+    if not node or not node.next:
         return node
 
+    output = node.next
     while node:
         node = doRev(node)
     return output
@@ -32,35 +32,33 @@ def doRev(node):
 def printList(node):
     iter = node
     while iter:
-        print iter
+        print iter,
         iter = iter.next
+    print
 
-a = Node(1)
-b = Node(2)
-c = Node(3)
-d = Node(4)
-e = Node(5)
-f = Node(6)
+def makeList(size):
+    node = Node(1)
+    if 1 == size:
+        return node
+    iter = node
+    for i in xrange(2,size+1):
+        next = Node(i)
+        iter.next = next
+        iter = next
+    return node
 
-#Test a single item list
-single = pwRev(a)
+
+print "None "
+printList(pwRev(None))
+
 print "Single "
-printList(single)
+printList(pwRev(makeList(1)))
 
-a.next = b
-b.next = c
-c.next = d
-d.next = e
-
-rev = pwRev(a)
 print "Five "
-printList(rev)
+printList(pwRev(makeList(5)))
 
-a.next = b
-b.next = c
-c.next = d
-d.next = e
-e.next = f
-six = pwRev(a)
 print "Six "
-printList(six)
+printList(pwRev(makeList(6)))
+
+print "Hundred "
+printList(pwRev(makeList(101)))
